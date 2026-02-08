@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// Prisma schema (Prisma 7+): no url/directUrl here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Store {
+  id                    Int      @id
+  slug                  String   @unique
+  name                  String
+  description           String?
+  storeType             String?
+  sameDayDelivery       Boolean  @default(false)
+  deliveryCharges       Int?
+  minOrderValue         Int?
+  freeDeliveryThreshold Int?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  products              Product[]
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+}
+
+model Category {
+  id         Int      @id @default(autoincrement())
+  externalId Int?
+  name       String
+  parentExt  Int?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  products   ProductCategory[]
+
+  @@index([name])
+  @@index([externalId])
+}
+
+model Product {
+  id               Int      @id
+  storeId           Int
+  store             Store    @relation(fields: [storeId], references: [id])
+
+  title             String
+  description       String?
+  price             Int
+  currency          String   @default("PKR")
+
+  inStock           Boolean  @default(true)
+  effectiveStock    Int?
+  isLessThan10      Boolean  @default(false)
+  reviewCount       Int      @default(0)
+  averageRating     Float    @default(0)
+
+  brandId           Int?
+  brand             Brand?   @relation(fields: [brandId], references: [id])
+
+  primaryImageUrl   String?
+  primaryImagePath  String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  images            ProductImage[]
+  categories        ProductCategory[]
+
+  @@index([storeId])
+  @@index([title])
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  src       String
+  alt       String?
+  width     Int?
+  height    Int?
+  sortOrder Int?
+
+  @@unique([productId, src])
+}
+
+model ProductCategory {
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@id([productId, categoryId])
+}
