@@ -11,3 +11,6 @@ export function jsonError(message: string, status: number): NextResponse<{
 }> {
   return jsonWithCache({ error: message }, status);
 }
+
+// CDN caching is handled at the Vercel edge; verify behavior with the
+// `x-vercel-cache` response header in production.
