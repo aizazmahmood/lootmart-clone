@@ -1,3 +1,5 @@
+import { Card } from "@/src/ui/primitives/Card";
+
 const FEATURES = [
   {
     title: "Same-Day",
@@ -47,9 +49,9 @@ export default function FeatureCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {FEATURES.map((feature) => (
-        <div
+        <Card
           key={feature.title}
-          className="rounded-2xl border border-[#efe6da] bg-white p-5 shadow-[0_8px_20px_rgba(17,24,39,0.06)]"
+          className="rounded-2xl p-5 shadow-[0_8px_20px_rgba(17,24,39,0.06)]"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4c44f]/20 text-[#c58a12]">
             {feature.icon}
@@ -58,7 +60,7 @@ export default function FeatureCards() {
             {feature.title}
           </h3>
           <p className="mt-1 text-sm text-[#556070]">{feature.subtitle}</p>
-        </div>
+        </Card>
       ))}
     </div>
   );

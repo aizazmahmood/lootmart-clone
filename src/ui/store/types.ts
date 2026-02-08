@@ -18,6 +18,12 @@ export type ProductsResponse = {
   nextCursor: number | null;
 };
 
+export type CategoryChip = {
+  id: number;
+  name: string;
+  count: number;
+};
+
 export type ViewMode = "grid" | "list";
 
 export type SortOption = "relevance" | "price_asc" | "price_desc" | "newest";

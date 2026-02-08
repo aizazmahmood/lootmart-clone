@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const CartDrawer = dynamic(() => import("@/src/ui/cart/CartDrawer"), {
-  ssr: false,
-});
+import CartMount from "@/src/ui/cart/CartMount";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +44,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <CartDrawer />
+        <CartMount />
       </body>
     </html>
   );

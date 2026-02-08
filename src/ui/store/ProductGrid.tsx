@@ -7,6 +7,7 @@ import ProductCard from "@/src/ui/store/ProductCard";
 type ProductGridProps = {
   storeSlug: string;
   storeName?: string;
+  categoryId?: number | null;
   query: string;
   inStockOnly: boolean;
   sort: SortOption;
@@ -23,6 +24,7 @@ const DEFAULT_LIMIT = 24;
 export default function ProductGrid({
   storeSlug,
   storeName,
+  categoryId,
   query,
   inStockOnly,
   sort,
@@ -40,9 +42,10 @@ export default function ProductGrid({
     params.set("limit", String(DEFAULT_LIMIT));
     if (query.trim()) params.set("q", query.trim());
     if (inStockOnly) params.set("inStock", "1");
+    if (categoryId) params.set("categoryId", String(categoryId));
     if (sort) params.set("sort", sort);
     return params;
-  }, [storeSlug, query, inStockOnly, sort]);
+  }, [storeSlug, query, inStockOnly, sort, categoryId]);
 
   const fetchProducts = useCallback(
     async (cursor: number | null, append: boolean, requestId: number) => {
@@ -104,7 +107,7 @@ export default function ProductGrid({
 
   const gridClasses =
     view === "grid"
-      ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+      ? "grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
       : "flex flex-col gap-4";
 
   return (
@@ -116,8 +119,15 @@ export default function ProductGrid({
               key={index}
               className={`rounded-2xl border border-[#efe6da] bg-white p-4 shadow-[0_8px_20px_rgba(17,24,39,0.06)] ${
                 view === "grid" ? "h-64" : "h-32"
-              } animate-pulse`}
-            />
+              }`}
+            >
+              <div className="h-full animate-pulse space-y-3">
+                <div className="h-24 w-full rounded-xl bg-[#f4efe8]" />
+                <div className="h-3 w-1/3 rounded-full bg-[#eadfcf]" />
+                <div className="h-4 w-4/5 rounded-full bg-[#eadfcf]" />
+                <div className="h-4 w-1/2 rounded-full bg-[#eadfcf]" />
+              </div>
+            </div>
           ))}
         </div>
       ) : state.items.length === 0 ? (

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/src/ui/cart/cartStore";
 import CartItemRow from "@/src/ui/cart/CartItemRow";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 
 export default function CartDrawer() {
   const isOpen = useCartStore((state) => state.isOpen);
@@ -15,22 +17,30 @@ export default function CartDrawer() {
   const storeName = useCartStore((state) => state.storeName);
   const hasHydrated = useCartStore((state) => state.hasHydrated);
   const items = useMemo(() => Object.values(itemsMap), [itemsMap]);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const lastActiveRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     hydrate();
   }, [hydrate]);
 
-  if (!isOpen) {
-    return null;
-  }
-
   useEffect(() => {
+    if (!isOpen) return;
+    lastActiveRef.current = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
     };
     document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [close]);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      lastActiveRef.current?.focus();
+    };
+  }, [close, isOpen]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   const label = hasHydrated ? storeName ?? storeSlug ?? "your store" : "your store";
   const checkoutHref = storeSlug
@@ -50,6 +60,7 @@ export default function CartDrawer() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
         role="dialog"
+        aria-modal="true"
         aria-label="Shopping cart"
       >
         <div className="flex items-center justify-between border-b border-[#efe6da] bg-white px-6 py-5">
@@ -59,21 +70,24 @@ export default function CartDrawer() {
               Items from {label}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={close}
-            className="rounded-full border border-[#efe6da] bg-white p-2 text-[#1f2a44] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+            variant="secondary"
+            size="sm"
+            className="h-9 w-9 rounded-full p-0"
             aria-label="Close cart"
+            ref={closeButtonRef}
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {!hasHydrated || items.length === 0 ? (
-            <div className="rounded-2xl border border-[#efe6da] bg-white p-6 text-sm text-[#6b7280]">
+            <Card className="p-6 text-sm text-[#6b7280]">
               Your cart is empty. Add items to get started.
-            </div>
+            </Card>
           ) : (
             <div className="flex flex-col gap-4">
               {items.map((item) => (
@@ -88,12 +102,9 @@ export default function CartDrawer() {
             <span>Total</span>
             <span>Rs. {hasHydrated ? subtotal : 0}</span>
           </div>
-          <Link
-            href={checkoutHref}
-            className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-[#f4c44f] px-5 py-3 text-sm font-semibold text-[#1b2a3b] shadow-sm transition hover:bg-[#f0b93c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2a3b] focus-visible:ring-offset-2"
-          >
-            Proceed to Checkout →
-          </Link>
+          <Button asChild className="mt-4 w-full">
+            <Link href={checkoutHref}>Proceed to Checkout →</Link>
+          </Button>
         </div>
       </aside>
     </div>

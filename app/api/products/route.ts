@@ -111,6 +111,16 @@ export async function GET(request: Request) {
     return jsonError("Invalid sort", 400);
   }
 
+  const categoryParam = searchParams.get("categoryId");
+  let categoryId: number | null = null;
+  if (categoryParam !== null) {
+    const parsedCategory = Number(categoryParam);
+    if (!Number.isInteger(parsedCategory) || parsedCategory <= 0) {
+      return jsonError("Invalid categoryId", 400);
+    }
+    categoryId = parsedCategory;
+  }
+
   try {
     const store = await prisma.store.findUnique({
       where: { slug: storeSlug },
@@ -131,6 +141,10 @@ export async function GET(request: Request) {
 
     if (inStock !== undefined) {
       where.inStock = inStock;
+    }
+
+    if (categoryId !== null) {
+      where.categories = { some: { categoryId } };
     }
 
     const orderBy: Prisma.ProductOrderByWithRelationInput[] = [];

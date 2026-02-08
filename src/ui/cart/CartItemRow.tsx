@@ -3,6 +3,8 @@
 import Image from "next/image";
 import type { CartItem } from "@/src/ui/cart/cartStore";
 import { useCartStore } from "@/src/ui/cart/cartStore";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 
 type CartItemRowProps = {
   item: CartItem;
@@ -25,7 +27,7 @@ export default function CartItemRow({ item }: CartItemRowProps) {
   const image = resolveImageSrc(item);
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-[#efe6da] bg-white p-3">
+    <Card className="flex items-center gap-4 rounded-2xl p-3 shadow-[0_8px_20px_rgba(17,24,39,0.06)]">
       <div className="relative h-14 w-14 overflow-hidden rounded-xl bg-[#f4efe8]">
         {image.src ? (
           image.isLocal ? (
@@ -61,35 +63,41 @@ export default function CartItemRow({ item }: CartItemRowProps) {
 
       <div className="flex flex-col items-end gap-2">
         <div className="flex items-center gap-2 rounded-full border border-[#efe6da] bg-[#fbf8f3] px-2 py-1">
-          <button
+          <Button
             type="button"
             onClick={() => dec(item.productId)}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+            variant="secondary"
+            size="sm"
+            className="h-6 w-6 rounded-full p-0 text-sm"
             aria-label={`Decrease quantity of ${item.title}`}
           >
             −
-          </button>
+          </Button>
           <span className="min-w-[20px] text-center text-sm font-semibold text-[#1f2a44]">
             {item.qty}
           </span>
-          <button
+          <Button
             type="button"
             onClick={() => inc(item.productId)}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+            variant="secondary"
+            size="sm"
+            className="h-6 w-6 rounded-full p-0 text-sm"
             aria-label={`Increase quantity of ${item.title}`}
           >
             +
-          </button>
+          </Button>
         </div>
-        <button
+        <Button
           type="button"
           onClick={() => remove(item.productId)}
-          className="text-xs font-semibold text-[#b42318] hover:text-[#8f1f16] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+          variant="ghost"
+          size="sm"
+          className="h-auto px-2 py-1 text-xs text-[#b42318] hover:text-[#8f1f16]"
           aria-label={`Remove ${item.title}`}
         >
           ✕
-        </button>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

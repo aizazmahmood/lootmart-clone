@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useMemo } from "react";
 import { useCartStore } from "@/src/ui/cart/cartStore";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 
 type StoreMeta = {
   slug: string;
@@ -50,30 +52,30 @@ export default function OrderSummary({
   const total = subtotal + deliveryAmount;
 
   return (
-    <div className="flex h-fit flex-col gap-5 rounded-3xl border border-[#efe6da] bg-white p-6 shadow-[0_12px_30px_rgba(17,24,39,0.08)]">
+    <Card className="flex h-fit flex-col gap-5 p-6">
       <h2 className="text-lg font-semibold text-[#0f1b2d]">Order Summary</h2>
 
-      <div className="rounded-2xl border border-[#efe6da] bg-[#fbf8f3] p-4">
+      <Card variant="soft" className="rounded-2xl p-4 shadow-none">
         <p className="text-xs uppercase tracking-wide text-[#9aa3b2]">
           Payment Method
         </p>
         <p className="mt-2 text-sm font-semibold text-[#1f2a44]">
           {paymentMethod === "cod" ? "Cash on Delivery" : "Card"}
         </p>
-      </div>
+      </Card>
 
       <div className="flex flex-col gap-3">
         {items.length === 0 ? (
-          <div className="rounded-2xl border border-[#efe6da] bg-[#fbf8f3] p-4 text-sm text-[#6b7280]">
+          <Card variant="soft" className="rounded-2xl p-4 text-sm text-[#6b7280] shadow-none">
             No items in cart.
-          </div>
+          </Card>
         ) : (
           items.map((item) => {
             const image = resolveImageSrc(item);
             return (
-              <div
+              <Card
                 key={item.productId}
-                className="flex items-center gap-3 rounded-2xl border border-[#efe6da] bg-white p-3"
+                className="flex items-center gap-3 rounded-2xl p-3 shadow-[0_8px_20px_rgba(17,24,39,0.06)]"
               >
                 <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-[#f4efe8]">
                   {image.src ? (
@@ -108,7 +110,7 @@ export default function OrderSummary({
                 <p className="text-sm font-semibold text-[#1f2a44]">
                   Rs. {item.price * item.qty}
                 </p>
-              </div>
+              </Card>
             );
           })
         )}
@@ -131,14 +133,14 @@ export default function OrderSummary({
         </div>
       </div>
 
-      <button
+      <Button
         type="button"
         disabled={!phone.trim()}
         onClick={onPlaceOrder}
-        className="inline-flex items-center justify-center rounded-full bg-[#f4c44f] px-5 py-3 text-sm font-semibold text-[#1b2a3b] shadow-sm transition hover:bg-[#f0b93c] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2a3b] focus-visible:ring-offset-2"
+        className="w-full"
       >
         Place Order
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }

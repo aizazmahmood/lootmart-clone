@@ -16,6 +16,7 @@ export default function LocationSelect({ value }: LocationSelectProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const listboxId = useId();
+  const labelId = useId();
 
   const handleChange = (nextValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -57,7 +58,9 @@ export default function LocationSelect({ value }: LocationSelectProps) {
 
   return (
     <div className="relative">
-      <span className="sr-only">Delivery location</span>
+      <span id={labelId} className="sr-only">
+        Delivery location
+      </span>
       <button
         ref={buttonRef}
         type="button"
@@ -65,6 +68,7 @@ export default function LocationSelect({ value }: LocationSelectProps) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
+        aria-labelledby={labelId}
         className="inline-flex items-center gap-2 rounded-full border border-[#e6dccf] bg-white px-3 py-2 text-sm font-medium text-[#1f2a44] shadow-[0_6px_16px_rgba(17,24,39,0.08)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#f4c44f]/20 text-[#b57512]">

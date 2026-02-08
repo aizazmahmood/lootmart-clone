@@ -177,7 +177,8 @@ state.dec = (productId) => {
   if (!existing) return;
   const nextQty = existing.qty - 1;
   if (nextQty <= 0) {
-    const { [productId]: _removed, ...rest } = state.items;
+    const rest = { ...state.items };
+    delete rest[productId];
     updateItems(rest);
     if (Object.keys(rest).length === 0) {
       setState({ storeSlug: null, storeName: null });
@@ -193,7 +194,8 @@ state.dec = (productId) => {
 };
 
 state.remove = (productId) => {
-  const { [productId]: _removed, ...rest } = state.items;
+  const rest = { ...state.items };
+  delete rest[productId];
   updateItems(rest);
   if (Object.keys(rest).length === 0) {
     setState({ storeSlug: null, storeName: null });

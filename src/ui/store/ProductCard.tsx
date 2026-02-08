@@ -3,6 +3,8 @@
 import Image from "next/image";
 import type { ProductItem, ViewMode } from "@/src/ui/store/types";
 import { useCartStore } from "@/src/ui/cart/cartStore";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 
 type ProductCardProps = {
   product: ProductItem;
@@ -47,8 +49,8 @@ export default function ProductCard({
   };
 
   return (
-    <div
-      className={`flex rounded-2xl border border-[#efe6da] bg-white p-4 shadow-[0_8px_20px_rgba(17,24,39,0.06)] ${
+    <Card
+      className={`flex rounded-2xl p-4 shadow-[0_8px_20px_rgba(17,24,39,0.06)] ${
         isList ? "flex-row gap-4" : "flex-col gap-3"
       }`}
     >
@@ -84,7 +86,7 @@ export default function ProductCard({
           {product.brand?.name ?? "Lootmart"}
         </p>
         <h3
-          className="text-sm font-semibold text-[#1f2a44]"
+          className="min-h-[2.5rem] text-sm font-semibold text-[#1f2a44]"
           style={{
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -99,38 +101,44 @@ export default function ProductCard({
             Rs. {product.price}
           </span>
           {qty === 0 ? (
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => addItem(payload, storeSlug, storeName)}
-              className="rounded-full border border-[#f4c44f] px-3 py-1 text-xs font-semibold text-[#1b2a3b] transition hover:bg-[#fef3d2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+              className="border-[#f4c44f] text-[#1b2a3b]"
             >
               Add
-            </button>
+            </Button>
           ) : (
             <div className="flex items-center gap-2 rounded-full border border-[#efe6da] bg-[#fbf8f3] px-2 py-1">
-              <button
+              <Button
                 type="button"
                 onClick={() => dec(product.id)}
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+                variant="secondary"
+                size="sm"
+                className="h-6 w-6 rounded-full p-0"
                 aria-label={`Decrease quantity of ${product.title}`}
               >
                 −
-              </button>
+              </Button>
               <span className="min-w-[18px] text-center text-xs font-semibold text-[#1f2a44]">
                 {qty}
               </span>
-              <button
+              <Button
                 type="button"
                 onClick={() => inc(product.id)}
-                className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+                variant="secondary"
+                size="sm"
+                className="h-6 w-6 rounded-full p-0"
                 aria-label={`Increase quantity of ${product.title}`}
               >
                 +
-              </button>
+              </Button>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

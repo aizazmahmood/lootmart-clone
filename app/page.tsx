@@ -3,6 +3,8 @@ import FeatureCards from "@/src/ui/components/FeatureCards";
 import PromoBanner from "@/src/ui/components/PromoBanner";
 import StoreCard from "@/src/ui/components/StoreCard";
 import { prisma } from "@/src/lib/prisma";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 import {
   DEFAULT_LOCATION,
   LOCATIONS,
@@ -75,13 +77,15 @@ export default async function Home({ searchParams }: PageProps) {
           <p className="mx-auto mt-4 max-w-2xl text-base text-[#556070] sm:text-lg">
             Your one-stop shop for convenient grocery delivery.
           </p>
-          <button
-            type="button"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#f4c44f] px-6 py-3 text-sm font-semibold text-[#1b2a3b] shadow-sm transition hover:bg-[#f0b93c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2a3b] focus-visible:ring-offset-2"
-            aria-label={`Delivering to ${location}`}
-          >
-            Delivering to {location}
-          </button>
+          <div className="mt-6 flex justify-center">
+            <Button
+              type="button"
+              size="md"
+              aria-label={`Delivering to ${location}`}
+            >
+              Delivering to {location}
+            </Button>
+          </div>
         </section>
 
         <FeatureCards />
@@ -98,10 +102,10 @@ export default async function Home({ searchParams }: PageProps) {
             </p>
           </div>
           {deliverableStores.length === 0 ? (
-            <div className="rounded-2xl border border-[#efe6da] bg-white p-6 text-sm text-[#6b7280]">
+            <Card className="p-6 text-sm text-[#6b7280]">
               No stores are currently available for {location}. Try another
               location to see what delivers.
-            </div>
+            </Card>
           ) : (
             <div className="grid gap-6 lg:grid-cols-2">
               {deliverableStores.map((store) => (
@@ -126,9 +130,9 @@ export default async function Home({ searchParams }: PageProps) {
             </p>
           </div>
           {allStores.length === 0 ? (
-            <div className="rounded-2xl border border-[#efe6da] bg-white p-6 text-sm text-[#6b7280]">
+            <Card className="p-6 text-sm text-[#6b7280]">
               All stores for this location are already available above.
-            </div>
+            </Card>
           ) : (
             <div className="grid gap-6 lg:grid-cols-2">
               {allStores.map((store) => (

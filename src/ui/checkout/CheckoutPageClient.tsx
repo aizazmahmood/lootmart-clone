@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import CheckoutForm from "@/src/ui/checkout/CheckoutForm";
 import OrderSummary from "@/src/ui/checkout/OrderSummary";
 import { useCartStore } from "@/src/ui/cart/cartStore";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
+import useHydrated from "@/src/ui/hooks/useHydrated";
 
 type StoreMeta = {
   slug: string;
@@ -17,14 +20,6 @@ type StoreMeta = {
 type CheckoutPageClientProps = {
   storeMeta: StoreMeta;
 };
-
-function useHydrated() {
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-  return hydrated;
-}
 
 export default function CheckoutPageClient({ storeMeta }: CheckoutPageClientProps) {
   const router = useRouter();
@@ -72,18 +67,15 @@ export default function CheckoutPageClient({ storeMeta }: CheckoutPageClientProp
   if (!hasItems) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-20 pt-16 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-[#efe6da] bg-white p-10 text-center shadow-[0_18px_40px_rgba(17,24,39,0.08)]">
+        <Card className="p-10 text-center shadow-[0_18px_40px_rgba(17,24,39,0.08)]">
           <h1 className="text-2xl font-semibold text-[#0f1b2d]">Checkout</h1>
           <p className="mt-3 text-sm text-[#6b7280]">
             Your cart is empty. Add items from a store to proceed.
           </p>
-          <Link
-            href="/"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#f4c44f] px-5 py-3 text-sm font-semibold text-[#1b2a3b] shadow-sm transition hover:bg-[#f0b93c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2a3b] focus-visible:ring-offset-2"
-          >
-            Go back to stores
-          </Link>
-        </div>
+          <Button asChild className="mt-6">
+            <Link href="/">Back to stores</Link>
+          </Button>
+        </Card>
       </div>
     );
   }

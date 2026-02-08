@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getStoreHours } from "@/src/config/demoHours";
+import { Badge } from "@/src/ui/primitives/Badge";
+import { Card } from "@/src/ui/primitives/Card";
 
 type StoreCardProps = {
   store: {
@@ -33,14 +35,15 @@ export default function StoreCard({ store, location, deliverable }: StoreCardPro
   const valueClass = deliverable ? "text-[#1f2a44]" : "text-[#8f98a6]";
 
   return (
-    <Link
-      href={`/stores/${store.slug}`}
-      className={`group block rounded-3xl border p-6 shadow-[0_12px_30px_rgba(17,24,39,0.06)] transition ${
+    <Card
+      asChild
+      className={`group block p-6 transition ${
         deliverable
-          ? "border-[#efe6da] bg-white hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(17,24,39,0.12)]"
-          : "border-[#efe6da] bg-[#f5f1eb] text-[#8c93a0]"
+          ? "hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(17,24,39,0.12)]"
+          : "bg-[#f5f1eb] text-[#8c93a0]"
       }`}
     >
+      <Link href={`/stores/${store.slug}`}>
       <div className="flex items-start justify-between">
         <div>
           <h3 className={`text-lg font-semibold ${titleClass}`}>{store.name}</h3>
@@ -48,15 +51,9 @@ export default function StoreCard({ store, location, deliverable }: StoreCardPro
             {formatStoreType(store.storeType)}
           </p>
         </div>
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
-            deliverable
-              ? "bg-[#e9f6ec] text-[#1c7f3c]"
-              : "bg-[#eceff3] text-[#7b8694]"
-          }`}
-        >
+        <Badge variant={deliverable ? "available" : "unavailable"}>
           {deliverable ? "Available" : "Unavailable"}
-        </span>
+        </Badge>
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -112,6 +109,7 @@ export default function StoreCard({ store, location, deliverable }: StoreCardPro
           →
         </span>
       </div>
-    </Link>
+      </Link>
+    </Card>
   );
 }

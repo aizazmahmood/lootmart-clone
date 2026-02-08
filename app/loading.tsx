@@ -32,6 +32,18 @@ export default function Loading() {
               ))}
             </div>
           </div>
+
+          <div className="space-y-4">
+            <div className="h-6 w-40 rounded-full bg-[#eadfcf]" />
+            <div className="grid gap-6 lg:grid-cols-2">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="h-56 rounded-3xl border border-[#efe6da] bg-white"
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

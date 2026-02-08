@@ -1,6 +1,7 @@
 import Link from "next/link";
 import LocationSelect from "@/src/ui/components/LocationSelect";
 import CartButton from "@/src/ui/cart/CartButton";
+import { Button } from "@/src/ui/primitives/Button";
 
 type HeaderProps = {
   location: string;
@@ -19,13 +20,9 @@ export default function Header({ location }: HeaderProps) {
         <div className="flex items-center gap-3">
           <LocationSelect value={location} />
           <CartButton />
-          <button
-            type="button"
-            className="rounded-full border border-[#e6dccf] bg-white px-4 py-2 text-sm font-medium text-[#1f2a44] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
-            aria-label="User menu"
-          >
+          <Button variant="secondary" size="sm" aria-label="User menu">
             Guest
-          </button>
+          </Button>
         </div>
       </div>
     </header>

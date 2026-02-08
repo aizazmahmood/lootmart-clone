@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { SortOption, ViewMode } from "@/src/ui/store/types";
+import { Button } from "@/src/ui/primitives/Button";
+import { Card } from "@/src/ui/primitives/Card";
 
 type StoreFiltersProps = {
   view: ViewMode;
@@ -65,34 +67,30 @@ export default function StoreFilters({
     options.find((option) => option.value === sort)?.label ?? "Relevance";
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl border border-[#efe6da] bg-white p-4 shadow-[0_12px_30px_rgba(17,24,39,0.06)] sm:flex-row sm:items-center sm:justify-between">
+    <Card className="flex flex-col gap-4 p-4 shadow-[0_12px_30px_rgba(17,24,39,0.06)] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
+          variant={view === "grid" ? "primary" : "secondary"}
+          size="sm"
           onClick={() => onViewChange("grid")}
           aria-pressed={view === "grid"}
-          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f] ${
-            view === "grid"
-              ? "border-[#f4c44f] bg-[#fef3d2] text-[#1b2a3b]"
-              : "border-[#efe6da] text-[#6b7280] hover:bg-[#f7f1e7]"
-          }`}
+          className="gap-2"
         >
           <span className="h-2.5 w-2.5 rounded-sm bg-current" />
           Grid
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant={view === "list" ? "primary" : "secondary"}
+          size="sm"
           onClick={() => onViewChange("list")}
           aria-pressed={view === "list"}
-          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f] ${
-            view === "list"
-              ? "border-[#f4c44f] bg-[#fef3d2] text-[#1b2a3b]"
-              : "border-[#efe6da] text-[#6b7280] hover:bg-[#f7f1e7]"
-          }`}
+          className="gap-2"
         >
           <span className="h-2.5 w-2.5 rounded-full border border-current" />
           List
-        </button>
+        </Button>
       </div>
 
       <label className="flex items-center gap-2 text-sm font-medium text-[#4b5563]">
@@ -159,6 +157,6 @@ export default function StoreFilters({
           </div>
         ) : null}
       </div>
-    </div>
+    </Card>
   );
 }

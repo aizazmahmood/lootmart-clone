@@ -1,5 +1,9 @@
 "use client";
 
+import { Card } from "@/src/ui/primitives/Card";
+import { Input } from "@/src/ui/primitives/Input";
+import type { CategoryChip } from "@/src/ui/store/types";
+
 const POPULAR_CHIPS = [
   "Bread",
   "Eggs",
@@ -14,16 +18,29 @@ const POPULAR_CHIPS = [
 type StoreSearchBarProps = {
   storeName: string;
   query: string;
+  inputId: string;
   onQueryChange: (value: string) => void;
+  categories: CategoryChip[];
+  categoriesLoading: boolean;
+  activeCategory: CategoryChip | null;
+  onCategorySelect: (id: number | null) => void;
+  onQuickSearch: (term: string) => void;
 };
 
 export default function StoreSearchBar({
   storeName,
   query,
+  inputId,
   onQueryChange,
+  categories,
+  categoriesLoading,
+  activeCategory,
+  onCategorySelect,
+  onQuickSearch,
 }: StoreSearchBarProps) {
+  const hasCategories = categories.length > 0;
   return (
-    <div className="rounded-3xl border border-[#efe6da] bg-white p-6 shadow-[0_12px_30px_rgba(17,24,39,0.08)]">
+    <Card className="p-6">
       <div className="flex flex-col gap-4">
         <div>
           <h2 className="text-xl font-semibold text-[#0f1b2d]">
@@ -48,41 +65,84 @@ export default function StoreSearchBar({
               <path d="M20 20l-3.5-3.5" strokeLinecap="round" />
             </svg>
           </span>
-          <input
+          <Input
             type="search"
             value={query}
+            id={inputId}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={`Search products in ${storeName}...`}
-            className="h-12 w-full rounded-full border border-[#e6dccf] bg-[#fbf8f3] pl-12 pr-4 text-sm text-[#1f2a44] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+            className="h-12 rounded-full pl-12 pr-4"
           />
         </label>
 
         <div className="flex flex-wrap gap-2">
-          {POPULAR_CHIPS.map((chip) => {
-            const active = chip.toLowerCase() === query.toLowerCase();
-            return (
+          {categoriesLoading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <span
+                key={`cat-skel-${index}`}
+                className="h-7 w-24 animate-pulse rounded-full border border-[#efe6da] bg-[#fbf8f3]"
+              />
+            ))
+          ) : hasCategories ? (
+            <>
               <button
-                key={chip}
                 type="button"
-                onClick={() => onQueryChange(chip)}
+                onClick={() => onCategorySelect(null)}
                 className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f] ${
-                  active
+                  !activeCategory
                     ? "border-[#f4c44f] bg-[#fef3d2] text-[#1b2a3b]"
                     : "border-[#efe6da] bg-white text-[#6b7280] hover:bg-[#f7f1e7]"
                 }`}
               >
-                {chip}
+                All
               </button>
-            );
-          })}
+              {categories.map((chip) => {
+                const active = activeCategory?.id === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    onClick={() => onCategorySelect(chip.id)}
+                    className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f] ${
+                      active
+                        ? "border-[#f4c44f] bg-[#fef3d2] text-[#1b2a3b]"
+                        : "border-[#efe6da] bg-white text-[#6b7280] hover:bg-[#f7f1e7]"
+                    }`}
+                  >
+                    {chip.name}
+                  </button>
+                );
+              })}
+            </>
+          ) : (
+            POPULAR_CHIPS.map((chip) => {
+              const active = chip.toLowerCase() === query.toLowerCase();
+              return (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => onQuickSearch(chip)}
+                  className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f] ${
+                    active
+                      ? "border-[#f4c44f] bg-[#fef3d2] text-[#1b2a3b]"
+                      : "border-[#efe6da] bg-white text-[#6b7280] hover:bg-[#f7f1e7]"
+                  }`}
+                >
+                  {chip}
+                </button>
+              );
+            })
+          )}
         </div>
 
         <div className="text-sm font-semibold text-[#1f2a44]">
           {query.trim().length > 0
             ? `Search Results for '${query.trim()}'`
-            : "Popular Products"}
+            : activeCategory
+              ? `Category: ${activeCategory.name}`
+              : "Popular Products"}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

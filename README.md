@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lootmart Clone
 
-## Getting Started
+Production-grade grocery storefront with Next.js App Router, Prisma 7, and Neon Postgres.
 
-First, run the development server:
+**Live Demo**
+- https://lootmart-clone.vercel.app/
 
-```bash
+**What’s Implemented**
+- Home page with hero, feature cards, promo banner, and store sections
+- Store page with search, dynamic category chips, filters, and paginated product grid
+- Cart drawer + sticky checkout bar
+- Checkout UI (client-side, demo-only)
+- API routes: stores, products, product detail, categories, health
+
+**Architecture Overview**
+- Next.js App Router with Server Components for data-heavy pages
+- Prisma 7 + Neon adapter for Postgres (pooled connections)
+- API routes with cache headers + ETag for read endpoints
+- ISR on key pages (`revalidate = 60`)
+- Client state for cart via localStorage hydration
+
+**How to Run Locally**
+1. Install deps
+```
+npm install
+```
+2. Set env vars
+```
+DATABASE_URL=postgres://...-pooler?sslmode=require
+DIRECT_URL=postgres://... (non-pooler, migrations only)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+3. Generate Prisma client
+```
+npx prisma generate
+```
+4. Run migrations
+```
+npx prisma migrate dev
+```
+5. Seed data
+```
+npm run db:seed
+```
+6. Start dev server
+```
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Seed Data**
+- Stores and products are loaded from `seed/input/*.json`
+- Product images are stored under `public/images/...`
+- The seed script clears existing rows and re-imports data
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Deployment Notes (Vercel)**
+- Set `DATABASE_URL` (pooled) and `DIRECT_URL` (non-pooled) in Vercel env vars
+- Run `npx prisma generate` during build
+- Run migrations via CI or manual command using `DIRECT_URL`
+- Cache headers are emitted by API routes for CDN caching
+- Verify cache behavior with `x-vercel-cache` response header
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Performance Notes**
+- Product listing is cursor-paginated (`limit` + `cursor`)
+- API caching: `s-maxage=60` with `stale-while-revalidate=600` + ETag
+- ISR for `Home` and `Store` pages (`revalidate = 60`)
+- Image optimization enabled for local + remote sources
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Key Endpoints**
+- `GET /api/stores`
+- `GET /api/stores/[slug]`
+- `GET /api/stores/[slug]/categories`
+- `GET /api/products`
+- `GET /api/products/[id]`
+- `GET /api/health`
