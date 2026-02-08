@@ -106,8 +106,14 @@ function persistState() {
 }
 
 function updateItems(nextItems: Record<number, CartItem>, extra?: Partial<CartState>) {
-  const totals = calculateTotals(nextItems);
-  setState({ items: nextItems, totalItems: totals.totalItems, subtotal: totals.subtotal, ...extra });
+  const normalizedItems = { ...nextItems };
+  const totals = calculateTotals(normalizedItems);
+  setState({
+    items: normalizedItems,
+    totalItems: totals.totalItems,
+    subtotal: totals.subtotal,
+    ...extra,
+  });
   persistState();
 }
 
