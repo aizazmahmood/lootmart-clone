@@ -4,6 +4,7 @@ import { useCartStore } from "@/src/ui/cart/cartStore";
 
 export default function CartButton() {
   const totalItems = useCartStore((state) => state.totalItems);
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
   const toggle = useCartStore((state) => state.toggle);
 
   return (
@@ -24,7 +25,7 @@ export default function CartButton() {
         <circle cx="10" cy="19" r="1.2" />
         <circle cx="17" cy="19" r="1.2" />
       </svg>
-      {totalItems > 0 ? (
+      {hasHydrated && totalItems > 0 ? (
         <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#f4c44f] px-1 text-[10px] font-semibold text-[#1b2a3b]">
           {totalItems}
         </span>

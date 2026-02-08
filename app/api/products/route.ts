@@ -1,6 +1,9 @@
 import { Prisma } from "@prisma/client";
+import { createHash } from "node:crypto";
+import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
-import { jsonError, jsonWithCache } from "@/src/lib/http";
+import { jsonError } from "@/src/lib/http";
+import { withCacheHeaders } from "@/src/lib/cache";
 
 export const runtime = "nodejs";
 
@@ -33,6 +36,21 @@ const productSelect = {
 } satisfies Prisma.ProductSelect;
 
 const ALLOWED_SORTS = new Set(["relevance", "price_asc", "price_desc", "newest"]);
+
+function createEtag(payload: unknown) {
+  const json = JSON.stringify(payload);
+  const hash = createHash("sha1").update(json).digest("base64");
+  return `"${hash}"`;
+}
+
+function matchesEtag(request: Request, etag: string) {
+  const ifNoneMatch = request.headers.get("if-none-match");
+  if (!ifNoneMatch) return false;
+  return ifNoneMatch
+    .split(",")
+    .map((value) => value.trim())
+    .includes(etag);
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -133,11 +151,22 @@ export async function GET(request: Request) {
       nextCursor = next?.id ?? null;
     }
 
-    return jsonWithCache({
+    const payload = {
       store,
       items: products,
       nextCursor,
-    });
+    };
+
+    const etag = createEtag(payload);
+    if (matchesEtag(request, etag)) {
+      const res = new NextResponse(null, { status: 304 });
+      res.headers.set("ETag", etag);
+      return withCacheHeaders(res);
+    }
+
+    const res = NextResponse.json(payload);
+    res.headers.set("ETag", etag);
+    return withCacheHeaders(res);
   } catch (error) {
     console.error("GET /api/products failed", error);
     return jsonError("Internal Server Error", 500);

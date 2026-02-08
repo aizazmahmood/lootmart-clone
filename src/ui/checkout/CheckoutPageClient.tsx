@@ -25,6 +25,7 @@ export default function CheckoutPageClient({ storeMeta }: CheckoutPageClientProp
   const storeName = useCartStore((state) => state.storeName);
   const totalItems = useCartStore((state) => state.totalItems);
   const clear = useCartStore((state) => state.clear);
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "card">("cod");
@@ -40,7 +41,18 @@ export default function CheckoutPageClient({ storeMeta }: CheckoutPageClientProp
     return "your store";
   }, [storeName, storeMeta?.name, storeSlug]);
 
-  const hasItems = totalItems > 0 && !!storeSlug;
+  const hasItems = hasHydrated && totalItems > 0 && !!storeSlug;
+
+  if (!hasHydrated) {
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 pb-20 pt-16 sm:px-6 lg:px-8">
+        <div className="rounded-3xl border border-[#efe6da] bg-white p-10 text-center shadow-[0_18px_40px_rgba(17,24,39,0.08)]">
+          <h1 className="text-2xl font-semibold text-[#0f1b2d]">Checkout</h1>
+          <p className="mt-3 text-sm text-[#6b7280]">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!hasItems) {
     return (

@@ -19,6 +19,7 @@ type CartState = {
   totalItems: number;
   subtotal: number;
   isOpen: boolean;
+  hasHydrated: boolean;
 };
 
 type AddItemInput = {
@@ -53,6 +54,7 @@ const initialState: CartState = {
   totalItems: 0,
   subtotal: 0,
   isOpen: false,
+  hasHydrated: false,
 };
 
 const listeners = new Set<() => void>();
@@ -112,6 +114,7 @@ function updateItems(nextItems: Record<number, CartItem>, extra?: Partial<CartSt
     items: normalizedItems,
     totalItems: totals.totalItems,
     subtotal: totals.subtotal,
+    hasHydrated: true,
     ...extra,
   });
   persistState();
@@ -199,7 +202,7 @@ state.remove = (productId) => {
 };
 
 state.clear = () => {
-  setState({ ...initialState });
+  setState({ ...initialState, hasHydrated: true });
   persistState();
 };
 
@@ -209,11 +212,18 @@ state.toggle = () => setState({ isOpen: !state.isOpen });
 
 state.hydrate = () => {
   if (typeof window === "undefined") return;
+  if (state.hasHydrated) return;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      setState({ hasHydrated: true });
+      return;
+    }
     const parsed = JSON.parse(raw) as Partial<CartState>;
-    if (!parsed || typeof parsed !== "object") return;
+    if (!parsed || typeof parsed !== "object") {
+      setState({ hasHydrated: true });
+      return;
+    }
     const items = parsed.items && typeof parsed.items === "object" ? parsed.items : {};
     const totals = calculateTotals(items as Record<number, CartItem>);
     setState({
@@ -223,9 +233,10 @@ state.hydrate = () => {
       totalItems: totals.totalItems,
       subtotal: totals.subtotal,
       isOpen: false,
+      hasHydrated: true,
     });
   } catch {
-    // ignore hydration errors
+    setState({ hasHydrated: true });
   }
 };
 

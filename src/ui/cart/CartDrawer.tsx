@@ -13,6 +13,7 @@ export default function CartDrawer() {
   const subtotal = useCartStore((state) => state.subtotal);
   const storeSlug = useCartStore((state) => state.storeSlug);
   const storeName = useCartStore((state) => state.storeName);
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
   const items = useMemo(() => Object.values(itemsMap), [itemsMap]);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function CartDrawer() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [isOpen, close]);
 
-  const label = storeName ?? storeSlug ?? "your store";
+  const label = hasHydrated ? storeName ?? storeSlug ?? "your store" : "your store";
   const checkoutHref = storeSlug
     ? `/checkout?store=${encodeURIComponent(storeSlug)}`
     : "/checkout";
@@ -69,7 +70,7 @@ export default function CartDrawer() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-6 py-5">
-          {items.length === 0 ? (
+          {!hasHydrated || items.length === 0 ? (
             <div className="rounded-2xl border border-[#efe6da] bg-white p-6 text-sm text-[#6b7280]">
               Your cart is empty. Add items to get started.
             </div>
@@ -85,7 +86,7 @@ export default function CartDrawer() {
         <div className="border-t border-[#efe6da] bg-white px-6 py-5">
           <div className="flex items-center justify-between text-sm font-semibold text-[#1f2a44]">
             <span>Total</span>
-            <span>Rs. {subtotal}</span>
+            <span>Rs. {hasHydrated ? subtotal : 0}</span>
           </div>
           <Link
             href={checkoutHref}

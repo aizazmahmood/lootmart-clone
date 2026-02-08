@@ -9,8 +9,9 @@ export default function StickyCheckoutBar() {
   const totalItems = useCartStore((state) => state.totalItems);
   const subtotal = useCartStore((state) => state.subtotal);
   const storeSlug = useCartStore((state) => state.storeSlug);
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
 
-  if (!pathname.startsWith("/stores/") || totalItems === 0) {
+  if (!hasHydrated || !pathname.startsWith("/stores/") || totalItems === 0) {
     return null;
   }
 

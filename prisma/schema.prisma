@@ -29,6 +29,8 @@ model Store {
   updatedAt             DateTime @updatedAt
 
   products              Product[]
+
+  @@index([slug])
 }
 
 model Brand {
@@ -84,7 +86,10 @@ model Product {
   categories        ProductCategory[]
 
   @@index([storeId])
-  @@index([title])
+  @@index([storeId, id])
+  @@index([storeId, inStock])
+  @@index([storeId, price])
+  @@index([storeId, title])
 }
 
 model ProductImage {

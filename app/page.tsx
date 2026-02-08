@@ -10,6 +10,8 @@ import {
   type Location,
 } from "@/src/config/delivery";
 
+export const revalidate = 60;
+
 type SearchParams = {
   loc?: string | string[];
 };

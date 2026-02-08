@@ -29,6 +29,9 @@ export default function ProductCard({
 }: ProductCardProps) {
   const image = resolveImageSrc(product);
   const isList = view === "list";
+  const sizes = isList
+    ? "96px"
+    : "(min-width: 1536px) 220px, (min-width: 1280px) 200px, (min-width: 1024px) 180px, (min-width: 640px) 160px, 50vw";
   const qty = useCartStore((state) => state.items[product.id]?.qty ?? 0);
   const addItem = useCartStore((state) => state.addItem);
   const inc = useCartStore((state) => state.inc);
@@ -55,22 +58,15 @@ export default function ProductCard({
         }`}
       >
         {image.src ? (
-          image.isLocal ? (
-            <Image
-              src={image.src}
-              alt={product.title}
-              fill
-              sizes={isList ? "96px" : "240px"}
-              className="object-contain"
-            />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={image.src}
-              alt={product.title}
-              className="h-full w-full object-contain"
-            />
-          )
+          <Image
+            src={image.src}
+            alt={product.title}
+            fill
+            sizes={sizes}
+            loading="lazy"
+            placeholder="empty"
+            className="object-contain"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-xs text-[#9aa3b2]">
             No image

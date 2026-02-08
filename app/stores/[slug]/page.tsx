@@ -8,6 +8,7 @@ import CartButton from "@/src/ui/cart/CartButton";
 import StickyCheckoutBar from "@/src/ui/cart/StickyCheckoutBar";
 
 export const runtime = "nodejs";
+export const revalidate = 60;
 
 type PageProps = {
   params: Promise<{ slug?: string }> | { slug?: string };
@@ -149,29 +150,24 @@ export default async function StorePage({ params }: PageProps) {
           <div className="relative mt-5">
             <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 hide-scrollbar">
               {featuredProducts.map((product) => {
-                const localImage = product.primaryImagePath
+                const imageSrc = product.primaryImagePath
                   ? `/${product.primaryImagePath}`
-                  : null;
+                  : product.primaryImageUrl;
                 return (
                   <div
                     key={product.id}
                     className="min-w-[220px] snap-start rounded-3xl border border-[#efe6da] bg-[#fbf8f3] p-4 shadow-[0_12px_24px_rgba(17,24,39,0.08)]"
                   >
                     <div className="relative h-32 w-full overflow-hidden rounded-2xl bg-white">
-                      {localImage ? (
+                      {imageSrc ? (
                         <Image
-                          src={localImage}
+                          src={imageSrc}
                           alt={product.title}
                           fill
                           sizes="220px"
+                          loading="lazy"
+                          placeholder="empty"
                           className="object-contain"
-                        />
-                      ) : product.primaryImageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={product.primaryImageUrl}
-                          alt={product.title}
-                          className="h-full w-full object-contain"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-xs text-[#9aa3b2]">
