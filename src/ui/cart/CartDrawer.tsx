@@ -29,6 +29,9 @@ export default function CartDrawer() {
   }, [isOpen, close]);
 
   const label = storeName ?? storeSlug ?? "your store";
+  const checkoutHref = storeSlug
+    ? `/checkout?store=${encodeURIComponent(storeSlug)}`
+    : "/checkout";
 
   return (
     <div
@@ -85,7 +88,7 @@ export default function CartDrawer() {
             <span>Rs. {subtotal}</span>
           </div>
           <Link
-            href="/checkout"
+            href={checkoutHref}
             className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-[#f4c44f] px-5 py-3 text-sm font-semibold text-[#1b2a3b] shadow-sm transition hover:bg-[#f0b93c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2a3b] focus-visible:ring-offset-2"
           >
             Proceed to Checkout →
