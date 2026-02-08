@@ -6,6 +6,7 @@ import ProductCard from "@/src/ui/store/ProductCard";
 
 type ProductGridProps = {
   storeSlug: string;
+  storeName?: string;
   query: string;
   inStockOnly: boolean;
   sort: SortOption;
@@ -21,6 +22,7 @@ const DEFAULT_LIMIT = 24;
 
 export default function ProductGrid({
   storeSlug,
+  storeName,
   query,
   inStockOnly,
   sort,
@@ -125,7 +127,13 @@ export default function ProductGrid({
       ) : (
         <div className={gridClasses}>
           {state.items.map((product) => (
-            <ProductCard key={product.id} product={product} view={view} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              view={view}
+              storeSlug={storeSlug}
+              storeName={storeName}
+            />
           ))}
         </div>
       )}

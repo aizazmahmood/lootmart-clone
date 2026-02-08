@@ -2,10 +2,13 @@
 
 import Image from "next/image";
 import type { ProductItem, ViewMode } from "@/src/ui/store/types";
+import { useCartStore } from "@/src/ui/cart/cartStore";
 
 type ProductCardProps = {
   product: ProductItem;
   view: ViewMode;
+  storeSlug: string;
+  storeName?: string;
 };
 
 function resolveImageSrc(product: ProductItem) {
@@ -18,9 +21,27 @@ function resolveImageSrc(product: ProductItem) {
   return { src: "", isLocal: false };
 }
 
-export default function ProductCard({ product, view }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  view,
+  storeSlug,
+  storeName,
+}: ProductCardProps) {
   const image = resolveImageSrc(product);
   const isList = view === "list";
+  const qty = useCartStore((state) => state.items[product.id]?.qty ?? 0);
+  const addItem = useCartStore((state) => state.addItem);
+  const inc = useCartStore((state) => state.inc);
+  const dec = useCartStore((state) => state.dec);
+
+  const payload = {
+    productId: product.id,
+    title: product.title,
+    price: product.price,
+    primaryImagePath: product.primaryImagePath ?? null,
+    primaryImageUrl: product.primaryImageUrl ?? null,
+    brandName: product.brand?.name ?? null,
+  };
 
   return (
     <div
@@ -81,12 +102,37 @@ export default function ProductCard({ product, view }: ProductCardProps) {
           <span className="text-sm font-semibold text-[#0f1b2d]">
             Rs. {product.price}
           </span>
-          <button
-            type="button"
-            className="rounded-full border border-[#f4c44f] px-3 py-1 text-xs font-semibold text-[#1b2a3b] transition hover:bg-[#fef3d2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
-          >
-            Add
-          </button>
+          {qty === 0 ? (
+            <button
+              type="button"
+              onClick={() => addItem(payload, storeSlug, storeName)}
+              className="rounded-full border border-[#f4c44f] px-3 py-1 text-xs font-semibold text-[#1b2a3b] transition hover:bg-[#fef3d2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+            >
+              Add
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 rounded-full border border-[#efe6da] bg-[#fbf8f3] px-2 py-1">
+              <button
+                type="button"
+                onClick={() => dec(product.id)}
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+                aria-label={`Decrease quantity of ${product.title}`}
+              >
+                −
+              </button>
+              <span className="min-w-[18px] text-center text-xs font-semibold text-[#1f2a44]">
+                {qty}
+              </span>
+              <button
+                type="button"
+                onClick={() => inc(product.id)}
+                className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-semibold text-[#1b2a3b] shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f4c44f]"
+                aria-label={`Increase quantity of ${product.title}`}
+              >
+                +
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

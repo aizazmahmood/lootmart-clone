@@ -33,6 +33,7 @@ export default function StoreBrowseSection({
       />
       <ProductGrid
         storeSlug={storeSlug}
+        storeName={storeName}
         query={query}
         inStockOnly={inStockOnly}
         sort={sort}

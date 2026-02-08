@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/src/lib/prisma";
 import { getStoreHours } from "@/src/config/demoHours";
 import StoreBrowseSection from "@/src/ui/store/StoreBrowseSection";
+import CartButton from "@/src/ui/cart/CartButton";
+import StickyCheckoutBar from "@/src/ui/cart/StickyCheckoutBar";
 
 export const runtime = "nodejs";
 
@@ -64,7 +66,7 @@ export default async function StorePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#f8f5f0] font-sans text-[#0f1b2d]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-32 pt-10 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-4">
           <Link
             href="/"
@@ -84,9 +86,12 @@ export default async function StorePage({ params }: PageProps) {
                 {formatStoreType(store.storeType)} · Fresh groceries delivered fast.
               </p>
             </div>
-            <span className="inline-flex items-center rounded-full bg-[#e9f6ec] px-4 py-1.5 text-xs font-semibold text-[#1c7f3c]">
-              Available
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center rounded-full bg-[#e9f6ec] px-4 py-1.5 text-xs font-semibold text-[#1c7f3c]">
+                Available
+              </span>
+              <CartButton />
+            </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -128,63 +133,78 @@ export default async function StorePage({ params }: PageProps) {
         </div>
 
         <section className="rounded-3xl border border-[#efe6da] bg-white p-6 shadow-[0_12px_30px_rgba(17,24,39,0.08)]">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[#0f1b2d]">
-              Featured Products
-            </h2>
-            <span className="text-xs font-semibold text-[#9aa3b2]">
-              Curated picks
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-[#0f1b2d]">
+                Featured Products
+              </h2>
+              <p className="text-sm text-[#6b7280]">
+                Curated picks for quick adds.
+              </p>
+            </div>
+            <span className="inline-flex items-center rounded-full border border-[#efe6da] bg-[#fbf8f3] px-3 py-1 text-xs font-semibold text-[#9aa3b2]">
+              Scroll to explore
             </span>
           </div>
-          <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-            {featuredProducts.map((product) => {
-              const localImage = product.primaryImagePath
-                ? `/${product.primaryImagePath}`
-                : null;
-              return (
-                <div
-                  key={product.id}
-                  className="min-w-[210px] rounded-2xl border border-[#efe6da] bg-[#fbf8f3] p-4"
-                >
-                  <div className="relative h-28 w-full overflow-hidden rounded-xl bg-white">
-                    {localImage ? (
-                      <Image
-                        src={localImage}
-                        alt={product.title}
-                        fill
-                        sizes="210px"
-                        className="object-contain"
-                      />
-                    ) : product.primaryImageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={product.primaryImageUrl}
-                        alt={product.title}
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-[#9aa3b2]">
-                        No image
+          <div className="relative mt-5">
+            <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 hide-scrollbar">
+              {featuredProducts.map((product) => {
+                const localImage = product.primaryImagePath
+                  ? `/${product.primaryImagePath}`
+                  : null;
+                return (
+                  <div
+                    key={product.id}
+                    className="min-w-[220px] snap-start rounded-3xl border border-[#efe6da] bg-[#fbf8f3] p-4 shadow-[0_12px_24px_rgba(17,24,39,0.08)]"
+                  >
+                    <div className="relative h-32 w-full overflow-hidden rounded-2xl bg-white">
+                      {localImage ? (
+                        <Image
+                          src={localImage}
+                          alt={product.title}
+                          fill
+                          sizes="220px"
+                          className="object-contain"
+                        />
+                      ) : product.primaryImageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={product.primaryImageUrl}
+                          alt={product.title}
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-xs text-[#9aa3b2]">
+                          No image
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-[#9aa3b2]">
+                        {product.brand?.name ?? store.name}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-[#1f2a44]">
+                        {product.title}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <p className="text-sm font-semibold text-[#0f1b2d]">
+                          Rs. {product.price}
+                        </p>
+                        <span className="rounded-full border border-[#f4c44f] px-2 py-1 text-[10px] font-semibold text-[#b57512]">
+                          Featured
+                        </span>
                       </div>
-                    )}
+                    </div>
                   </div>
-                  <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-[#9aa3b2]">
-                    {product.brand?.name ?? store.name}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[#1f2a44]">
-                    {product.title}
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-[#0f1b2d]">
-                    Rs. {product.price}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </section>
 
         <StoreBrowseSection storeSlug={store.slug} storeName={store.name} />
       </div>
+      <StickyCheckoutBar />
     </div>
   );
 }
