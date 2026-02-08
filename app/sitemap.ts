@@ -21,19 +21,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/`,
-      changeFrequency: "daily",
+      changeFrequency: "daily" as const,
       priority: 1,
       lastModified: new Date(),
     },
     {
       url: `${baseUrl}/checkout`,
-      changeFrequency: "weekly",
+      changeFrequency: "weekly" as const,
       priority: 0.6,
       lastModified: new Date(),
     },
     ...stores.map((store) => ({
       url: `${baseUrl}/stores/${store.slug}`,
-      changeFrequency: "daily",
+      changeFrequency: "daily" as const,
       priority: 0.8,
       lastModified: new Date(),
     })),
