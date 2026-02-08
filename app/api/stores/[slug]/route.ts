@@ -42,7 +42,14 @@ export async function GET(_request: Request, context: RouteContext) {
 
     return jsonWithCache(store);
   } catch (error) {
-    console.error("GET /api/stores/[slug] failed", error);
+    console.error(
+      JSON.stringify({
+        route: "/api/stores/[slug]",
+        message: "GET /api/stores/[slug] failed",
+        params: { slug: normalizedSlug },
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
     return jsonError("Internal Server Error", 500);
   }
 }

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { jsonError } from "@/src/lib/http";
 import { withCacheHeaders } from "@/src/lib/cache";
+import { rateLimit } from "@/src/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -75,7 +76,16 @@ function matchesEtag(request: Request, etag: string) {
     .includes(etag);
 }
 
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(request: Request, context: RouteContext) {
+  const rateLimited = rateLimit(request, {
+    key: "GET:/api/products/[id]",
+    limit: 120,
+    windowMs: 60_000,
+  });
+  if (rateLimited) {
+    return rateLimited;
+  }
+
   const { id } = await context.params;
   const parsedId = Number(id);
 
@@ -94,7 +104,7 @@ export async function GET(_request: Request, context: RouteContext) {
     }
 
     const etag = createEtag(product);
-    if (matchesEtag(_request, etag)) {
+    if (matchesEtag(request, etag)) {
       const res = new NextResponse(null, { status: 304 });
       res.headers.set("ETag", etag);
       return withCacheHeaders(res);
@@ -104,7 +114,14 @@ export async function GET(_request: Request, context: RouteContext) {
     res.headers.set("ETag", etag);
     return withCacheHeaders(res);
   } catch (error) {
-    console.error("GET /api/products/[id] failed", error);
+    console.error(
+      JSON.stringify({
+        route: "/api/products/[id]",
+        message: "GET /api/products/[id] failed",
+        params: { id },
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
     return jsonError("Internal Server Error", 500);
   }
 }

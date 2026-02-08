@@ -25,7 +25,13 @@ export async function GET() {
 
     return jsonWithCache(stores);
   } catch (error) {
-    console.error("GET /api/stores failed", error);
+    console.error(
+      JSON.stringify({
+        route: "/api/stores",
+        message: "GET /api/stores failed",
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
     return jsonError("Internal Server Error", 500);
   }
 }

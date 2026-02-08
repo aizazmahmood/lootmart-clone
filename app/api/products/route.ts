@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/src/lib/prisma";
 import { jsonError } from "@/src/lib/http";
 import { withCacheHeaders } from "@/src/lib/cache";
+import { rateLimit } from "@/src/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -53,6 +54,15 @@ function matchesEtag(request: Request, etag: string) {
 }
 
 export async function GET(request: Request) {
+  const rateLimited = rateLimit(request, {
+    key: "GET:/api/products",
+    limit: 60,
+    windowMs: 60_000,
+  });
+  if (rateLimited) {
+    return rateLimited;
+  }
+
   const { searchParams } = new URL(request.url);
 
   const storeSlug = searchParams.get("storeSlug")?.trim() ?? "";
@@ -168,7 +178,14 @@ export async function GET(request: Request) {
     res.headers.set("ETag", etag);
     return withCacheHeaders(res);
   } catch (error) {
-    console.error("GET /api/products failed", error);
+    console.error(
+      JSON.stringify({
+        route: "/api/products",
+        message: "GET /api/products failed",
+        params: Object.fromEntries(searchParams.entries()),
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
     return jsonError("Internal Server Error", 500);
   }
 }
