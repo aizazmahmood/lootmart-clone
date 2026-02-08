@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/src/lib/prisma";
-import { withCacheHeaders } from "@/src/lib/cache";
+import { jsonError, jsonWithCache } from "@/src/lib/http";
 
 export const runtime = "nodejs";
 
@@ -28,9 +27,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const normalizedSlug = typeof slug === "string" ? slug.trim() : "";
 
   if (!normalizedSlug) {
-    return withCacheHeaders(
-      NextResponse.json({ error: "Invalid slug" }, { status: 400 }),
-    );
+    return jsonError("Invalid slug", 400);
   }
 
   try {
@@ -40,17 +37,13 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     if (!store) {
-      return withCacheHeaders(
-        NextResponse.json({ error: "Store not found" }, { status: 404 }),
-      );
+      return jsonError("Store not found", 404);
     }
 
-    return withCacheHeaders(NextResponse.json(store));
+    return jsonWithCache(store);
   } catch (error) {
     console.error("GET /api/stores/[slug] failed", error);
-    return withCacheHeaders(
-      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
-    );
+    return jsonError("Internal Server Error", 500);
   }
 }
 

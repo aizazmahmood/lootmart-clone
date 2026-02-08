@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/src/lib/prisma";
-import { withCacheHeaders } from "@/src/lib/cache";
+import { jsonError, jsonWithCache } from "@/src/lib/http";
 
 export const runtime = "nodejs";
 
@@ -24,12 +23,10 @@ export async function GET() {
       select: storeSelect,
     });
 
-    return withCacheHeaders(NextResponse.json(stores));
+    return jsonWithCache(stores);
   } catch (error) {
     console.error("GET /api/stores failed", error);
-    return withCacheHeaders(
-      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
-    );
+    return jsonError("Internal Server Error", 500);
   }
 }
 
