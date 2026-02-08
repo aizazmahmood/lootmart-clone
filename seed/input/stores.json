@@ -1,0 +1,40 @@
+[
+  {
+    "id": 24,
+    "slug": "hash-mart",
+    "name": "Hash Mart",
+    "description": "",
+    "store_type": "mart",
+    "same_day_delivery": true,
+    "delivery_charges": 200,
+    "min_order_value": 100,
+    "free_delivery_threshold": 500,
+    "store_areas": [
+      {
+        "area_id": 5,
+        "same_day_delivery": true
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "royal-cash-and-carry",
+    "name": "Royal Cash & Carry",
+    "description": "",
+    "store_type": "mart",
+    "same_day_delivery": true,
+    "delivery_charges": 100,
+    "min_order_value": 100,
+    "free_delivery_threshold": 1000,
+    "store_areas": [
+      {
+        "area_id": 3,
+        "same_day_delivery": true
+      },
+      {
+        "area_id": 4,
+        "same_day_delivery": true
+      }
+    ]
+  }
+]
