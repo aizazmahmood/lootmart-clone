@@ -17,9 +17,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
-  title: "Lootmart - Clone",
-  description: "A clone of Lootmart, an e-commerce platform for groceries.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Lootmart",
+    template: "%s | Lootmart",
+  },
+  description: "Your one-stop shop for convenient grocery delivery.",
+  openGraph: {
+    title: "Lootmart",
+    description: "Your one-stop shop for convenient grocery delivery.",
+    type: "website",
+    siteName: "Lootmart",
+    url: siteUrl,
+  },
 };
 
 export default function RootLayout({
