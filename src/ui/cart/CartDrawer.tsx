@@ -20,14 +20,17 @@ export default function CartDrawer() {
     hydrate();
   }, [hydrate]);
 
+  if (!isOpen) {
+    return null;
+  }
+
   useEffect(() => {
-    if (!isOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") close();
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [isOpen, close]);
+  }, [close]);
 
   const label = hasHydrated ? storeName ?? storeSlug ?? "your store" : "your store";
   const checkoutHref = storeSlug
@@ -35,10 +38,7 @@ export default function CartDrawer() {
     : "/checkout";
 
   return (
-    <div
-      className={`fixed inset-0 z-50 ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}
-      aria-hidden={!isOpen}
-    >
+    <div className="fixed inset-0 z-50" aria-hidden={!isOpen}>
       <div
         className={`absolute inset-0 bg-black/40 transition-opacity ${
           isOpen ? "opacity-100" : "opacity-0"

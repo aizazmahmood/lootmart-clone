@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import CartDrawer from "@/src/ui/cart/CartDrawer";
+
+const CartDrawer = dynamic(() => import("@/src/ui/cart/CartDrawer"), {
+  ssr: false,
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

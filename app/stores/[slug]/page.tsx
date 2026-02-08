@@ -1,11 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import dynamic from "next/dynamic";
 import { prisma } from "@/src/lib/prisma";
 import { getStoreHours } from "@/src/config/demoHours";
 import StoreBrowseSection from "@/src/ui/store/StoreBrowseSection";
 import CartButton from "@/src/ui/cart/CartButton";
-import StickyCheckoutBar from "@/src/ui/cart/StickyCheckoutBar";
+
+const StickyCheckoutBar = dynamic(
+  () => import("@/src/ui/cart/StickyCheckoutBar"),
+  { ssr: false },
+);
 
 export const runtime = "nodejs";
 export const revalidate = 60;
